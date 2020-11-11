@@ -6,7 +6,7 @@ import time
 start = time.time()
 engine = sqlalchemy.create_engine('sqlite:///superdb.db', echo=True)
 
-engine.execute('''create table if not exists sample (id int, name text, detail text)''')
+engine.execute('''create table if not exists sample (id int, name text, detail text, dtes text)''')
 
 session = Session(
         bind = engine,
@@ -15,15 +15,18 @@ session = Session(
         )
 
 i = 0
-for i in range(10000):
-    sql = text('''
-            insert into sample values (:id, 'test', 'testseteste')
-            ''', bindparams=[bindparam('id', i)])
-    session.execute(sql)
+values = []
+for i in range(20000000):
+    values.append({"id":i})
+sql = text('''
+    insert into sample values (:id, 'test', 'testseteste', "testtestttes")
+''')
+session.execute(sql, values)
+
 #    session.execute("insert into sample values (?, 'test', 'testseteste')", )
 session.commit()
 
-engine.execute("drop table sample")
+#engine.execute("drop table sample")
 
 print(time.time() - start)
 
